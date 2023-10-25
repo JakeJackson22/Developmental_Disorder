@@ -1,0 +1,206 @@
+---
+title: "Seurat Tutorial"
+output: html_document
+---
+
+```{r}
+#install.packages("Seurat")
+#install.packages("patchwork")
+
+library(dplyr)
+library(Seurat)
+library(patchwork)
+library(R.utils)
+library(pheatmap)
+```
+
+
+```{r}
+untar("pbmc3k_filtered_gene_bc_matrices.tar.gz")
+
+
+```
+
+```{r}
+
+```
+
+
+```{r}
+# Load the PBMC dataset
+pbmc.data <- Read10X(data.dir = "filtered_gene_bc_matrices/hg19")
+# Initialize the Seurat object with the raw (non-normalized data).
+pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
+pbmc
+```
+
+
+```{r}
+pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
+```
+
+
+```{r}
+VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+```
+
+
+```{r}
+plot1 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+plot1 + plot2
+```
+
+
+```{r}
+pbmc <- subset(pbmc, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+```
+
+```{r}
+pbmc <- NormalizeData(pbmc, normalization.method = "LogNormalize", scale.factor = 10000)
+```
+
+
+```{r}
+pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
+
+# Identify the 10 most highly variable genes
+top10 <- head(VariableFeatures(pbmc), 10)
+
+# plot variable features with and without labels
+plot1 <- VariableFeaturePlot(pbmc)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)
+plot1 + plot2
+```
+
+
+```{r}
+all.genes <- rownames(pbmc)
+pbmc <- ScaleData(pbmc, features = all.genes)
+```
+
+
+```{r}
+pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+```
+
+
+```{r}
+print(pbmc[["pca"]], dims = 1:5, nfeatures = 5)
+```
+
+
+```{r}
+VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
+```
+
+
+```{r}
+DimPlot(pbmc, reduction = "pca")
+```
+
+
+```{r}
+DimHeatmap(pbmc, dims = 1, cells = 500, balanced = TRUE)
+```
+
+
+```{r}
+ElbowPlot(pbmc)
+```
+
+
+```{r}
+pbmc <- FindNeighbors(pbmc, dims = 1:10)
+pbmc <- FindClusters(pbmc, resolution = 0.5)
+```
+
+
+```{r}
+head(Idents(pbmc), 5)
+```
+
+
+```{r}
+pbmc <- RunUMAP(pbmc, dims = 1:10)
+```
+
+
+```{r}
+DimPlot(pbmc, reduction = "umap")
+```
+
+
+```{r}
+cluster2.markers <- FindMarkers(pbmc, ident.1 = 0, min.pct = 0.25)
+head(cluster2.markers, n = 5)
+```
+
+
+```{r}
+cluster5.markers <- FindMarkers(pbmc, ident.1 = 2, min.pct = 0.25)
+head(cluster5.markers, n = 5)
+
+```
+
+
+#bone marrow/immune
+
+```{r}
+VlnPlot(pbmc, features = c("DOCK8","SLC46A1","SLC25A38","PSMB8","PCNT","TBX1","NOP10","FANCC","SLC35C1"))
+
+#"SLX4","FANCB","NTRK1","BRIP1","XPC","NT5C3A","FOXN1","DOCK8","SLC46A1","SLC25A38","PSMB8","PCNT","TBX1","NOP10","FANCC","SLC35C1","FANCF","ITCH","PLCG2","MGAT2","LYST","IKBKG","FANCG","SGSH","FANCE","UVSSA","MT-TP","ERCC4","RTEL1","MMADHC","JAGN1","UMPS","BLOC1S6","DSG1","DHFR","MTRR","DNMT3B","CD151","ADA","TBXAS1","WRAP53","LRBA","FANCD2","AIRE","RPS19","ANKRD26","FTCD","BRCA2","CBS","NIPBL","TNFRSF13B","PEPD","ABHD5","TTC7A","PGK1","FANCA","ABCB7","GBA1","AK2","ERCC6L2","CEP57","IRX5","GATA2","MAN2B1","RAD51C","LIG4","IFIH1","JAK3","HAX1","TBCE","MTR","ACP5","RBM8A","KLF1","FANCM","LBR","SEC23B","HPS1","CLPB","PMS2","DKC1","TMPRSS6","NBN","GTF2H5","RNF168","ATM","SMARCAL1","CYB5R3","XPA","BLM","MYH9","ERCC1","FOXP3","PALB2","PGM3","FANCI","RAD50","FANCL","SBDS","SPRTN","DDX11","RECQL4","USB1","MAPRE2","MECOM","HOXA11","TERT","PARN","TINF2","TERC","GTF2E2","SAMD9L","TFRC","SEC61A1","OTULIN","IARS1","EMG1","TRNT1","CAD","SRP54","SLC37A4","POLE","SAMD9","FUT8","EXTL3","BRD4","NBAS","NPM1","AP1B1","UQCRFS1","CDC42","MADD","PRIM1","TPP2","MYSM1","NFE2L2","PAX1"
+
+```
+
+#Liver
+
+```{r}
+VlnPlot(pbmc, features = c("CFAP418","CEP290","CC2D2A","RPGRIP1L","DNAH5","C1QBP","TFE3","NBAS","PRIM1","COX16"))
+
+"CFAP418","CEP290","CC2D2A","RPGRIP1L","DNAH5","C1QBP","TFE3","NBAS","PRIM1","COX16"
+```
+#Lungs
+```{r}
+VlnPlot(pbmc, features = c("WNT3","CCDC103","USP18","ODAD4","DNAJB13","DNAH5","CFAP300","FOXJ1","TTC121"))
+
+```
+
+
+
+```{r}
+new.cluster.ids <- c("Germ Cells", "CD14+ Mono", "Neurons", "B", "CD8 T", "FCGR3A+ Mono",
+    "NK", "DC", "Platelet")
+names(new.cluster.ids) <- levels(pbmc)
+pbmc <- RenameIdents(pbmc, new.cluster.ids)
+DimPlot(pbmc, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
+
+```
+
+
+
+```{r}
+library(pheatmap)
+```
+
+
+
+
+```{r}
+Difexp <- FetchData(pbmc, vars = all.genes)
+```
+
+
+```{r}
+#plotC <- pheatmap(Difexp)
+```
+
+
+```{r}
+```
+
+
+
+
+
+

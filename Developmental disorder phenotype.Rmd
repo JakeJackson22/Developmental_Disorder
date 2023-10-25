@@ -1,0 +1,251 @@
+---
+title: "Deveopmental disorder phenotype"
+output: html_document
+---
+```{r}
+#install.packages(R.utils)
+
+library(R.utils)
+
+#install.packages(dplyr)
+library(dplyr)
+
+#install.packages(tidyr)
+library(tidyr)
+
+library(stringr)
+
+#install.packages(tidyverse)
+library(tidyverse)
+
+
+```
+
+#unzip file
+
+```{r}
+##gunzip("DDG2P_6_10_2023.csv.gz", remove=FALSE)
+
+```
+
+#read csv file
+
+```{r}
+DDP <- read.csv("DDG2P_6_10_2023.csv")
+#DDP2 <- read.csv("DDG2P_6_10_2023.csv")
+```
+
+#label unknowns
+
+```{r}
+DDP$organ.specificity.list[DDP$organ.specificity.list == ''] <- 'Unknown'
+#write.csv(DDP, "DDPwUnknown.csv")
+```
+
+#seperate out rows based on location/organs (will create duplicate rows of genes)(There are also duplicates before this anyway)
+
+#creating counts table for numbers of genes in each location/organ
+
+```{r}
+DDPsep <- separate_longer_delim(DDP, organ.specificity.list,";")
+
+##write.csv(DDPsep, "DDPsep.csv")
+
+Counts <- as.data.frame(table(DDPsep$organ.specificity.list))
+Counts <- Counts[-1,]
+
+colnames(Counts)[1] <- "Organ/Location"
+
+Counts <- Counts[order(Counts$Freq, decreasing = TRUE),]
+
+```
+
+```{r}
+#write.csv(CountsV2, "CountsV2.csv")
+
+```
+
+
+```{r}
+##x <- str_subset(DDPsep$organ.specificity.list, "Eye:")
+
+##DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == x] <- "Eye"
+
+```
+
+##Collapsing suborgans into full organ category
+
+```{r}
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Eye: Retina'] <- 'Eye'
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Eye: Lens'] <- 'Eye'
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Eye: Structure'] <- 'Eye'
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Eye: Physiology'] <- 'Eye'
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Eye: Cornea'] <- 'Eye'
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Eye: Connective tissue'] <- 'Eye'
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Eye: Optic nerve'] <- 'Eye'
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Eye: Vasculature'] <- 'Eye'
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Eye: Vitreous'] <- 'Eye'
+
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Endocrine'] <- 'Endocrine/Metabolic'
+
+DDPsep$organ.specificity.list[DDPsep$organ.specificity.list == 'Peripheral nerves'] <- 'Spinal cord/Peripheral nerves'
+
+#write.csv(DDPsep, "DDPsepV2.csv")
+```
+
+#creating counts table
+
+```{r}
+CountsV2 <- as.data.frame(table(DDPsep$organ.specificity.list))
+CountsV2 <- CountsV2[-1,]
+
+colnames(CountsV2)[1] <- "Organ/Location"
+
+CountsV2 <- CountsV2[order(CountsV2$Freq, decreasing = TRUE),]
+```
+
+#creating list of just genes vs organs
+```{r}
+DDPsep <- read.csv("DDPsepV2.csv")
+
+DDPLoc <- DDPsep[c('gene.symbol', 'organ.specificity.list')]
+
+```
+#Remove blank values
+
+```{r}
+#DDPLoc <- DDPLoc[!(is.na(DDPLoc$organ.specificity.list) | DDPLoc$organ.specificity.list==""), ]
+
+```
+
+###Making gene vs location table
+
+###annotate blank spaces as unknown
+```{r}
+#DDP$organ.specificity.list[DDP$organ.specificity.list == ''] <- 'Unknown'
+
+```
+
+#merge duplicate listings
+
+
+```{r}
+#library(data.table)
+DDPsep <- setDT(DDPsep)[,.(organ.specificity.list=paste(organ.specificity.list,collapse=",")),by="gene.symbol"]
+#write.csv(DDP, "DDPnoDUP.csv")
+```
+
+
+#Get list of TRUE/FALSE values for each location; will be ordered by original order of genes in original csv
+
+```{r}
+
+Eye <- grepl("Eye", DDPsep$organ.specificity.list)
+Brain <- grepl("Brain", DDPsep$organ.specificity.list)
+Skeleton <- grepl("Skeleton", DDPsep$organ.specificity.list)
+Endocrine <- grepl("Endocrine", DDPsep$organ.specificity.list)
+Heart <- grepl("Heart", DDPsep$organ.specificity.list)
+Face <- grepl("Face", DDPsep$organ.specificity.list)
+Skin <- grepl("Skin", DDPsep$organ.specificity.list)
+Kidney <- grepl("Kidney", DDPsep$organ.specificity.list)
+GI <- grepl("GI", DDPsep$organ.specificity.list)
+Ear <- grepl("Ear", DDPsep$organ.specificity.list)
+Bone_Marrow <- grepl("Bone Marrow", DDPsep$organ.specificity.list)
+Musculature <- grepl("Musculature", DDPsep$organ.specificity.list)
+Genitalia <- grepl("Genitalia", DDPsep$organ.specificity.list)
+Peripheral <- grepl("Peripheral", DDPsep$organ.specificity.list)
+Teeth <- grepl("Teeth", DDPsep$organ.specificity.list)
+Respiratory <- grepl("Respiratory", DDPsep$organ.specificity.list)
+Hair <- grepl("Hair", DDPsep$organ.specificity.list)
+Multisystem <- grepl("Multisystem", DDPsep$organ.specificity.list)
+Cancer <- grepl("Cancer", DDPsep$organ.specificity.list)
+Liver <- grepl("Liver", DDPsep$organ.specificity.list)
+Lungs <- grepl("Lungs", DDPsep$organ.specificity.list)
+Unknown <- grepl("Unknown", DDPsep$organ.specificity.list)
+
+
+
+```
+
+
+```{r}
+sum(str_detect(Eye, "TRUE"))
+sum(str_detect(Brain, "TRUE"))
+sum(str_detect(Musculature, "TRUE"))
+
+```
+
+#Add TRUE/FALSE lists to create table
+
+```{r}
+LocGen <- subset(DDPsep, select = -c(2) )
+LocGen$Eye <- Eye
+LocGen$Brain_Cognition <- Brain
+LocGen$Skeleton <- Skeleton
+LocGen$Endocrine_Metabolic <- Endocrine
+LocGen$Heart_Cardiovasculature_Lymphatic <- Heart
+LocGen$Face <- Face
+LocGen$Skin <- Skin
+LocGen$Kidney_Renal_Tract <- Kidney
+LocGen$GI_Tract <- GI
+LocGen$Ear <- Ear
+LocGen$Bone_Marrow_Immune <- Bone_Marrow
+LocGen$Musculature <- Musculature
+LocGen$Genitalia <- Genitalia
+LocGen$Spinal_Cord_Peripheral_Nerves <- Peripheral
+LocGen$Teeth_Dentation <- Teeth
+LocGen$Respiratory_Tract <- Respiratory
+LocGen$Hair_Nails <- Hair
+LocGen$Multisystem <- Multisystem
+LocGen$Cancer_Predisposition <- Cancer
+LocGen$Liver <- Liver
+LocGen$Lungs <- Lungs
+LocGen$Unknown <- Unknown
+
+```
+
+#Find duplicates and remove
+
+
+```{r}
+#n_occur <- data.frame(table(LocGen$gene.symbol))
+
+#LocGen = LocGen[!duplicated(LocGen$gene.symbol),]
+
+LocGen <- LocGen %>% remove_rownames %>% column_to_rownames(var="gene.symbol") 
+
+
+```
+
+#number of duplicates
+```{r}
+n_occur[n_occur$Freq >1,]
+```
+
+
+```{r}
+write.csv(LocGen, "gene_locationsV4.csv")
+```
+
+#Select rows(genes) based on location of body
+
+```{r}
+LocGen[LocGen$Ear == 'TRUE',]
+
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+```{r}
+```
+
+
+
+
