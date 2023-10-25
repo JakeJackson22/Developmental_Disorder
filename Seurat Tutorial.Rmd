@@ -197,8 +197,12 @@ Difexp <- FetchData(pbmc, vars = all.genes)
 
 
 ```{r}
+DoHeatmap(pbmc)
 ```
 
+```{r}
+doheatm
+```
 
 
 
