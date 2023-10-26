@@ -3,7 +3,21 @@ title: "New Visualisation"
 output: html_document
 date: "2023-10-19"
 ---
+
+
 ```{r}
+library(dplyr)
+library(Seurat)
+library(patchwork)
+library(R.utils)
+library(pheatmap)
+library(UpSetR)
+```
+
+
+
+```{r}
+DDP <- read.csv("gene_locationsV4.csv", row.names = 1)
 # Load the PBMC dataset
 pbmc.data <- Read10X(data.dir = "filtered_gene_bc_matrices/hg19")
 # Initialize the Seurat object with the raw (non-normalized data).
@@ -19,22 +33,35 @@ pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
 
 
 ```{r}
-DoHeatmap(pbmc)
+DoHeatmap(pbmc, group)
+```
+
+
+
+```{r}
+Difexp <- FetchData(pbmc, vars = all.genes)
+Difexp
+```
+
+```{r}
+DDPH <- sapply(DDP, as.integer)
+DDPH <- as.data.frame(DDPH)
+rownames(DDPH) <- rownames(DDP)
+```
+
+```{r}
+upset(DDPH, nsets = 22,order.by = "freq")
 ```
 
 
 ```{r}
+pbmc@assays$RNA@counts
 ```
 
-
 ```{r}
-```
+
+head(pbmc[["RNA"]][[]])
 
 
-```{r}
-```
-
-
-```{r}
 ```
 

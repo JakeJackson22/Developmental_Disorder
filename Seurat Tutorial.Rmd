@@ -201,7 +201,7 @@ DoHeatmap(pbmc)
 ```
 
 ```{r}
-doheatm
+pheatmap(Difexp)
 ```
 
 
