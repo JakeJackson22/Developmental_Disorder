@@ -33,7 +33,7 @@ pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
 
 
 ```{r}
-DoHeatmap(pbmc, group)
+DoHeatmap(pbmc)
 ```
 
 
@@ -56,12 +56,39 @@ upset(DDPH, nsets = 22,order.by = "freq")
 
 ```{r}
 pbmc@assays$RNA@counts
+head(pbmc[["RNA"]][[]])
 ```
+
+#Finding similar genes between pbmc and ddd
+```{r}
+
+pbmcgen <- rownames(pbmc[["RNA"]][[]])
+dddgen <- rownames(DDP)
+length(intersect(pbmcgen,dddgen))
+
+commongen <- intersect(pbmcgen,dddgen)
+```
+
+#Finding different genes
+
+```{r}
+diffgen <- setdiff(pbmcgen, dddgen)
+
+
+```
+
+
+#subsetting pbmc data based on these genes
+
 
 ```{r}
 
-head(pbmc[["RNA"]][[]])
+pbmc2 <- subset(pbmc,features=setdiff(rownames(pbmc),diffgen))
 
+```
+#Heatmap with reduced genes
 
+```{r}
+DoHeatmap(pbmc2)
 ```
 
