@@ -92,3 +92,21 @@ pbmc2 <- subset(pbmc,features=setdiff(rownames(pbmc),diffgen))
 DoHeatmap(pbmc2)
 ```
 
+```{r}
+Skin <- DDP[DDP$Skin == "TRUE",]
+Nervous <- DDP[DDP$Spinal_Cord_Peripheral_Nerves == "TRUE" | DDP$Brain_Cognition == "TRUE",]
+Musco <- DDP[DDP$Skeleton == "TRUE" | DDP$Musculature,]
+Circulatory <- DDP[DDP$Heart_Cardiovasculature_Lymphatic | DDP$Bone_Marrow_Immune,]
+
+Skin <- rownames(Skin)
+Nervous <- rownames(Nervous)
+Musco <- rownames(Musco)
+Circulatory <- rownames(Circulatory)
+```
+
+#Finding different genes between pbmc and ddd organ specific lists
+```{r}
+diffgenCirc<- setdiff(pbmcgen, Circulatory)
+pbmcCirc <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenCirc))
+DoHeatmap(pbmcCirc)
+```
