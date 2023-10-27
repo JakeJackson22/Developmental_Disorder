@@ -147,24 +147,12 @@ head(cluster5.markers, n = 5)
 #bone marrow/immune
 
 ```{r}
-VlnPlot(pbmc, features = c("DOCK8","SLC46A1","SLC25A38","PSMB8","PCNT","TBX1","NOP10","FANCC","SLC35C1"))
+#VlnPlot(pbmc, features = c("DOCK8","SLC46A1","SLC25A38","PSMB8","PCNT","TBX1","NOP10","FANCC","SLC35C1"))
 
 #"SLX4","FANCB","NTRK1","BRIP1","XPC","NT5C3A","FOXN1","DOCK8","SLC46A1","SLC25A38","PSMB8","PCNT","TBX1","NOP10","FANCC","SLC35C1","FANCF","ITCH","PLCG2","MGAT2","LYST","IKBKG","FANCG","SGSH","FANCE","UVSSA","MT-TP","ERCC4","RTEL1","MMADHC","JAGN1","UMPS","BLOC1S6","DSG1","DHFR","MTRR","DNMT3B","CD151","ADA","TBXAS1","WRAP53","LRBA","FANCD2","AIRE","RPS19","ANKRD26","FTCD","BRCA2","CBS","NIPBL","TNFRSF13B","PEPD","ABHD5","TTC7A","PGK1","FANCA","ABCB7","GBA1","AK2","ERCC6L2","CEP57","IRX5","GATA2","MAN2B1","RAD51C","LIG4","IFIH1","JAK3","HAX1","TBCE","MTR","ACP5","RBM8A","KLF1","FANCM","LBR","SEC23B","HPS1","CLPB","PMS2","DKC1","TMPRSS6","NBN","GTF2H5","RNF168","ATM","SMARCAL1","CYB5R3","XPA","BLM","MYH9","ERCC1","FOXP3","PALB2","PGM3","FANCI","RAD50","FANCL","SBDS","SPRTN","DDX11","RECQL4","USB1","MAPRE2","MECOM","HOXA11","TERT","PARN","TINF2","TERC","GTF2E2","SAMD9L","TFRC","SEC61A1","OTULIN","IARS1","EMG1","TRNT1","CAD","SRP54","SLC37A4","POLE","SAMD9","FUT8","EXTL3","BRD4","NBAS","NPM1","AP1B1","UQCRFS1","CDC42","MADD","PRIM1","TPP2","MYSM1","NFE2L2","PAX1"
 
 ```
 
-#Liver
-
-```{r}
-VlnPlot(pbmc, features = c("CFAP418","CEP290","CC2D2A","RPGRIP1L","DNAH5","C1QBP","TFE3","NBAS","PRIM1","COX16"))
-
-"CFAP418","CEP290","CC2D2A","RPGRIP1L","DNAH5","C1QBP","TFE3","NBAS","PRIM1","COX16"
-```
-#Lungs
-```{r}
-VlnPlot(pbmc, features = c("WNT3","CCDC103","USP18","ODAD4","DNAJB13","DNAH5","CFAP300","FOXJ1","TTC121"))
-
-```
 
 
 
@@ -193,15 +181,6 @@ Difexp <- FetchData(pbmc, vars = all.genes)
 
 ```{r}
 #plotC <- pheatmap(Difexp)
-```
-
-
-```{r}
-DoHeatmap(pbmc)
-```
-
-```{r}
-pheatmap(Difexp)
 ```
 
 

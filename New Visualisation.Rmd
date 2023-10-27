@@ -106,7 +106,35 @@ Circulatory <- rownames(Circulatory)
 
 #Finding different genes between pbmc and ddd organ specific lists
 ```{r}
-diffgenCirc<- setdiff(pbmcgen, Circulatory)
+diffgenCirc <- setdiff(pbmcgen, Circulatory)
 pbmcCirc <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenCirc))
 DoHeatmap(pbmcCirc)
 ```
+
+
+
+```{r}
+diffgenSkin <- setdiff(pbmcgen, Skin)
+pbmcSkin <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenSkin))
+DoHeatmap(pbmcSkin)
+```
+```{r}
+diffgenNervous <- setdiff(pbmcgen, Nervous)
+pbmcNervous <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenNervous))
+DoHeatmap(pbmcNervous)
+```
+```{r}
+diffgenMusco <- setdiff(pbmcgen, Musco)
+pbmcMusco <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenMusco))
+DoHeatmap(pbmcMusco)
+```
+
+```{r}
+pbmc <- FindNeighbors(pbmc, dims = 1:10)
+pbmc <- FindClusters(pbmc, resolution = 0.5)
+pbmc <- RunUMAP(pbmc, dims = 1:10)
+```
+
+
+
+
