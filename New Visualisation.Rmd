@@ -111,18 +111,18 @@ pbmcCirc <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenCirc))
 DoHeatmap(pbmcCirc)
 ```
 
-
-
 ```{r}
 diffgenSkin <- setdiff(pbmcgen, Skin)
 pbmcSkin <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenSkin))
 DoHeatmap(pbmcSkin)
 ```
+
 ```{r}
 diffgenNervous <- setdiff(pbmcgen, Nervous)
 pbmcNervous <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenNervous))
 DoHeatmap(pbmcNervous)
 ```
+
 ```{r}
 diffgenMusco <- setdiff(pbmcgen, Musco)
 pbmcMusco <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenMusco))
@@ -133,8 +133,85 @@ DoHeatmap(pbmcMusco)
 pbmc <- FindNeighbors(pbmc, dims = 1:10)
 pbmc <- FindClusters(pbmc, resolution = 0.5)
 pbmc <- RunUMAP(pbmc, dims = 1:10)
+DimPlot(pbmc, reduction = "umap")
+new.cluster.ids <- c("Naive CD4 T", "CD14+ Mono", "Memory CD4 T", "B", "CD8 T", "FCGR3A+ Mono",
+    "NK", "DC", "Platelet")
+names(new.cluster.ids) <- levels(pbmc)
+pbmc <- RenameIdents(pbmc, new.cluster.ids)
+DimPlot(pbmc, reduction = "umap", label = TRUE, pt.size = 0.5) + NoLegend()
+```
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+#Re running heatmaps after clustering
+
+#Finding similar genes between pbmc and ddd
+```{r}
+
+pbmcgen <- rownames(pbmc[["RNA"]][[]])
+dddgen <- rownames(DDP)
+length(intersect(pbmcgen,dddgen))
+
+commongen <- intersect(pbmcgen,dddgen)
+```
+
+#Finding different genes
+
+```{r}
+diffgen <- setdiff(pbmcgen, dddgen)
+
+
 ```
 
 
+#subsetting pbmc data based on these genes
 
+
+```{r}
+
+pbmc2 <- subset(pbmc,features=setdiff(rownames(pbmc),diffgen))
+
+```
+#Heatmap with reduced genes
+
+```{r}
+DoHeatmap(pbmc2)
+```
+
+```{r}
+Skin <- DDP[DDP$Skin == "TRUE",]
+Nervous <- DDP[DDP$Spinal_Cord_Peripheral_Nerves == "TRUE" | DDP$Brain_Cognition == "TRUE",]
+Musco <- DDP[DDP$Skeleton == "TRUE" | DDP$Musculature,]
+Circulatory <- DDP[DDP$Heart_Cardiovasculature_Lymphatic | DDP$Bone_Marrow_Immune,]
+
+Skin <- rownames(Skin)
+Nervous <- rownames(Nervous)
+Musco <- rownames(Musco)
+Circulatory <- rownames(Circulatory)
+```
+
+#Finding different genes between pbmc and ddd organ specific lists
+```{r}
+diffgenCirc <- setdiff(pbmcgen, Circulatory)
+pbmcCirc <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenCirc))
+DoHeatmap(pbmcCirc)
+```
+
+```{r}
+diffgenSkin <- setdiff(pbmcgen, Skin)
+pbmcSkin <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenSkin))
+DoHeatmap(pbmcSkin)
+```
+
+```{r}
+diffgenNervous <- setdiff(pbmcgen, Nervous)
+pbmcNervous <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenNervous))
+DoHeatmap(pbmcNervous)
+```
+
+```{r}
+diffgenMusco <- setdiff(pbmcgen, Musco)
+pbmcMusco <- subset(pbmc,features=setdiff(rownames(pbmc),diffgenMusco))
+DoHeatmap(pbmcMusco)
+```
 
